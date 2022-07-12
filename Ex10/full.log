@@ -1,0 +1,8 @@
+12/07/2022 10:39:40 DEBUG [main] (StudentWSPublisher.java:18) Global: Main started
+12/07/2022 10:39:40 DEBUG [Thread-0] (ThreadOne.java:58) Global: Thread 1 started
+12/07/2022 10:40:28  INFO [pool-1-thread-1] (StudentWS.java:33) StudentWS: Username/password khong hop le
+12/07/2022 10:40:56  INFO [pool-1-thread-1] (StudentWS.java:54) StudentWS: Them student that bai do class khong ton tai
+12/07/2022 10:41:36  INFO [pool-1-thread-1] (StudentWS.java:54) StudentWS: Them student that bai do class khong ton tai
+12/07/2022 10:42:33  INFO [pool-1-thread-1] (StudentWS.java:59) StudentWS: Thanh Cong
+12/07/2022 10:42:33 DEBUG [Thread-0] (ThreadOne.java:17) Global: Thread 1 ?ã add student có code dtc18 vào queue
+12/07/2022 10:42:33 DEBUG [Thread-0] (ThreadOne.java:38) Global: ?ã thêm student có code dtc18 vào db

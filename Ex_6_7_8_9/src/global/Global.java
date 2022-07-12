@@ -1,0 +1,191 @@
+package global;
+
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Scanner;
+
+import org.apache.log4j.Logger;
+
+import file.Xfile;
+import model.Student;
+
+public class Global {
+	private static final Scanner sc = new Scanner(System.in);
+	public static File fileConfig = new File("app.conf");
+	public static File dbConfig = new File("db.conf");
+	public static volatile String username = "";
+	public static volatile String password = "";
+	// public static volatile Student student = null;
+	public static volatile String mySQLDriver = "";
+	public static volatile String conUrl = "";
+	public static volatile Connection connection = null;
+	public static volatile Logger logger = Logger.getLogger(Global.class.getName());
+	public static List<Student> listStudent = new ArrayList<>();
+	public static Queue<Student> queue = new PriorityQueue<>();
+
+	public static synchronized Student addStudent() {
+		Student student = null;
+		System.out.println("Mời Bạn Nhập Mã Sinh Viên : ");
+		String code = sc.nextLine();
+		System.out.println("Mời Bạn Nhập Tên Sinh Viên : ");
+		String name = sc.nextLine();
+		System.out.println("Mời Bạn Nhập Tuổi : ");
+		int age = sc.nextInt();
+		sc.nextLine();
+		System.out.println("Mời Bạn Nhập Tên Lớp Học : ");
+		String className = sc.nextLine();
+		System.out.println("Mời Bạn Nhập Địa Chỉ : ");
+		String address = sc.nextLine();
+		System.out.println("Mời Bạn Nhập Điểm : ");
+		Float mark = sc.nextFloat();
+		if (code != "" && name != "" && className != "" && address != "" && String.valueOf(age) != ""
+				&& String.valueOf(mark) != "") {
+			student = new Student(code, name, age, className, address, mark);
+			System.out.println("Lưu Thành Công");
+		} else {
+			System.out.println("Lưu Thất Bại");
+
+		}
+		return student;
+
+	}
+
+	public static void showListStudents() {
+		for (Student students : Xfile.readFile()) {
+			System.out.printf("%s, %s, %d, %s, %s, %f", students.getCode(), students.getName(), students.getAge(),
+					students.getClassName(), students.getAddress(), students.getMark() + "\n");
+		}
+
+	}
+
+	public static boolean checkLogin(String user, String pass) {
+		try {
+			Scanner scanner = new Scanner(fileConfig);
+			if (!scanner.hasNextLine()) {
+				System.out.println("File khong co thong tin");
+			} else {
+				while (scanner.hasNextLine()) {
+					String[] splitted = scanner.nextLine().split("=");
+					if (splitted[0].equals("username"))
+						username = splitted[1];
+					else if (splitted[0].equals("password"))
+						password = splitted[1];
+				}
+				scanner.close();
+			}
+			if (user.equals(username) && pass.equals(password))
+				return true;
+		} catch (Exception e) {
+			System.out.println("Loi doc file");
+			System.out.println(e.getMessage());
+		}
+		return false;
+
+	}
+
+	public static synchronized boolean readDbConf() {
+		boolean result = false;
+		try {
+			Scanner scanner = new Scanner(dbConfig);
+			if (!scanner.hasNextLine()) {
+				System.out.println("File khong co thong tin");
+			} else {
+				while (scanner.hasNextLine()) {
+					String[] splitted = scanner.nextLine().split("=");
+					if (splitted[0].equals("driver"))
+						mySQLDriver = splitted[1];
+					else if (splitted[0].equals("connection"))
+						conUrl = splitted[1] + "?autoRenconnect=true&&useSSL=false";
+				}
+				scanner.close();
+				if (!mySQLDriver.equals("") || !conUrl.equals(""))
+					result = true;
+			}
+		} catch (Exception e) {
+			System.out.println("Loi doc file");
+			System.out.println(e.getMessage());
+		}
+		return result;
+	}
+
+	public static synchronized Connection getMySQLConnection() {
+		if (readDbConf() && !username.equals("") && !password.equals("")) {
+			try {
+				Class.forName(mySQLDriver);
+				connection = DriverManager.getConnection(conUrl, username, password);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		return connection;
+	}
+
+	public static synchronized void insertToDB(Student student) {
+		PreparedStatement preparedStatement = null;
+		connection = getMySQLConnection();
+		if (connection != null) {
+			try {
+				String sql = "insert into student(code,name,age,classname,address,mark) values(?,?,?,?,?,?)";
+				preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setString(1, student.getCode());
+				preparedStatement.setString(2, student.getName());
+				preparedStatement.setInt(3, student.getAge());
+				preparedStatement.setString(4, student.getClassName());
+				preparedStatement.setString(5, student.getAddress());
+				preparedStatement.setFloat(6, student.getMark());
+				preparedStatement.execute();
+				if (preparedStatement.getUpdateCount() > 0) {
+					Global.logger.debug("Đã thêm student vào db");
+				} else
+					Global.logger.error("Thêm student vào db thất bại");
+			} catch (SQLException throwables) {
+				Global.logger.error("Không thêm được student vào db", throwables);
+			} finally {
+				try {
+					if (preparedStatement != null)
+						preparedStatement.close();
+					if (connection != null)
+						connection.close();
+				} catch (SQLException throwables) {
+					System.out.println(throwables);
+				}
+			}
+		}
+	}
+
+	public static synchronized void insertClassToDB(model.Class c) {
+		PreparedStatement preparedStatement = null;
+		connection = getMySQLConnection();
+		if (connection != null) {
+			try {
+				String sql = "insert into class(name,code) values(?,?)";
+				preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setString(1, c.getName());
+				preparedStatement.setString(2, c.getCode());
+				preparedStatement.execute();
+				if (preparedStatement.getUpdateCount() > 0) {
+					Global.logger.info("Da Them Class Vao db");
+				} else
+					Global.logger.info("Thêm Class vào db thất bại");
+			} catch (SQLException throwables) {
+				Global.logger.error("Không thêm được Class vào db", throwables);
+			} finally {
+				try {
+					if (preparedStatement != null)
+						preparedStatement.close();
+					if (connection != null)
+						connection.close();
+				} catch (SQLException throwables) {
+					System.out.println(throwables);
+				}
+			}
+		}
+	}
+}
