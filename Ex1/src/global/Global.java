@@ -1,4 +1,5 @@
 package global;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.InputMismatchException;
@@ -12,20 +13,20 @@ import model.Student;
 
 public class Global {
 	private static final Scanner sc = new Scanner(System.in);
-    public static volatile Logger logger = Logger.getLogger(Global.class.getName());
-	private boolean checkName = false;
-	private boolean checkPoint = false;
-	private boolean checkEmail = false;
+	public static volatile Logger logger = Logger.getLogger(Global.class.getName());
+	private boolean isName = false;
+	private boolean isPoint = false;
+	private boolean isEmail = false;
 	private final double POINT_MIN = 0;
 	private final double POINT_MAX = 10;
 
-	public static Pattern pattern;
-	public static Matcher matcher;
+	private static Pattern pattern;
+	private static Matcher matcher;
 	// public static final String EMAIL_REGEX =
 	// "^[A-Za-z0-9]+[A-Za-z0-9]*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)$";
-	public static final String EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
+	private static final String EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
 
-	public static List<Student> listStudent= new ArrayList<>();
+	private static final List<Student> listStudent = new ArrayList<>();
 	static {
 		
 		//Khởi Tạo Dữ Liệu Cho listStudent
@@ -42,7 +43,7 @@ public class Global {
 		listStudent.add(new Student("Mai Trung Duc", 4.5, "duclgbt@gmail.com"));
 	}
 
-	// Y1  Nhập Danh Sách Student
+	// Y1 Nhập Danh Sách Student
 	public void inputStudent(String code) {
 		String name, email;
 		float point;
@@ -50,8 +51,7 @@ public class Global {
 		point = checkPoint("Mời Bạn Nhập Điểm: ");
 		email = checkEmail();
 		if (code != "") {
-			listStudent.set(Integer.parseInt(code),
-					new Student(name, point, email));
+			listStudent.set(Integer.parseInt(code), new Student(name, point, email));
 		} else {
 			listStudent.add(new Student(name, point, email));
 		}
@@ -65,19 +65,15 @@ public class Global {
 		} else {
 			for (Student student : listStudent) {
 
-				System.out.printf("\nCode:%s ,Name: %s ,Point: %.1f ,Email: %s ,Rank: %s ",
-						student.getCode(),
-						student.getName(),
-						student.getPoint(),
-						student.getEmail(),
-						setRank(student.getPoint()));
+				System.out.printf("\nCode:%s ,Name: %s ,Point: %.1f ,Email: %s ,Rank: %s ", student.getCode(),
+						student.getName(), student.getPoint(), student.getEmail(), setRank(student.getPoint()));
 
 			}
 		}
 
 	}
 
-	// Y3 Tìm Kiếm Thông Tin Student Theo Khoảng Điểm Nhập Vào 
+	// Y3 Tìm Kiếm Thông Tin Student Theo Khoảng Điểm Nhập Vào
 	public void findByAboutPoint() {
 		if (listStudent.isEmpty()) {
 			System.out.println("Danh Sách Rỗng");
@@ -134,57 +130,82 @@ public class Global {
 	}
 
 	// Y6 Sắp Xếp Student Theo Điểm
-	public void sortStudentByPoint(String mes, int limit) {
+	public void sortStudentByPoint(String mes) {
 		if (listStudent.isEmpty()) {
 			System.out.println("Danh Sách Rỗng");
 		} else {
 			Collections.sort(listStudent);
 			System.out.println(mes);
 			// outputStudent();
-			for (int i = 0; i < limit; i++) {
+			for (int i = 0; i < listStudent.size(); i++) {
 				printStudent(listStudent.get(i));
 			}
 		}
 
 	}
 
-	// Y7 Xuất Danh Sách 5 Student Có Điểm Cao  Nhất
+	// Y7 Xuất Danh Sách 5 Student Có Điểm Cao Nhất
 	public void outputStudentLimitFiveMaxPoint() {
-		sortStudentByPoint("Danh Sach 5 Hoc Vien Co Diem Cao Nhat La: ", 5);
+		if (listStudent.isEmpty()) {
+			System.out.println("Danh Sách Rỗng");
+		} else {
+			Collections.sort(listStudent);
+			System.out.println("Danh Sach 5 Hoc Vien Co Diem Cao Nhat La: ");
+			// outputStudent();
+			for (int i = 0; i <5; i++) {
+				printStudent(listStudent.get(i));
+			}
+		}
 
 	}
 
 	// Y8 Tính Điểm Trung Bình Của Tất Cả Student
-	public double CalculatePointAVG() {
-		double avgPoint = 0;
-		for (Student student : listStudent) {
-			avgPoint += student.getPoint();
+	public double calculatePointAVG() {
+		float avgListStudent = 0f;
+		if (listStudent.isEmpty()) {
+			System.out.println("Danh Sách Rỗng");
+		} else {
+			float avgPoint = 0;
+			for (Student student : listStudent) {
+				avgPoint += student.getPoint();
 
+			}
+
+			avgListStudent = avgPoint / listStudent.size();
+			System.out.printf("Điểm Trung Bình Của Tất Cả Sinh Viên Là: %.2f ", avgListStudent);
 		}
-	
-		return avgPoint / listStudent.size();
+
+		return avgListStudent;
 
 	}
 
 	// Y9 Xuất Danh Sách Student Có Điểm Trên Điểm Trung Bình
 	public void outputStudentOnPointAVG() {
-		System.out.println("Danh Sách Sinh Viên Trên Điểm Trung Bình Của Lớp Là: ");
-		for (Student student : listStudent) {
-			if (student.getPoint() > CalculatePointAVG()) {
-				printStudent(student);
+		if (listStudent.isEmpty()) {
+			System.out.println("Danh Sách Rỗng");
+
+		} else {
+			System.out.println("Danh Sách Sinh Viên Trên Điểm Trung Bình Của Lớp Là: ");
+			for (Student student : listStudent) {
+				if (student.getPoint() > calculatePointAVG()) {
+					printStudent(student);
+				}
 			}
 		}
 	}
 
 	// Y10 Tổng Hợp Student Theo Xếp Loại Học Lực
-	public void SyntheticStudentGroupbyRank() {
+	public void syntheticStudentGroupbyRank() {
 		int countKem = 0;
 		int countYeu = 0;
 		int countTrungBinh = 0;
 		int countKha = 0;
 		int countGioi = 0;
 		int countXuatSac = 0;
+		// String kem =Rank.KEM.getRank();
+
 		for (int i = 0; i < listStudent.size(); i++) {
+			
 			switch (setRank(listStudent.get(i).getPoint())) {
 			case "KEM":
 				countKem++;
@@ -207,32 +228,42 @@ public class Global {
 			}
 
 		}
-		
-		System.out.println("Tổng Số Sinh Viên Xếp Loại Kém La: " + countKem
+
+		System.out.println("Tổng Số Sinh Viên Xếp Loại Kém La: " + countKem 
 				+ "\nTổng Số Sinh Viên Xếp Loại Yếu Là: "+ countYeu 
-				+ "\nTổng Số Sinh Viên Xếp Loại Trung Bình Là: " + countTrungBinh
-				+ "\nTổng Số Sinh Viên Xếp Loại Khá Là: " + countKha
+				+"\nTổng Số Sinh Viên Xếp Loại Trung Bình Là: " + countTrungBinh
+				+ "\nTổng Số Sinh Viên Xếp Loại Khá Là: " + countKha 
 				+ "\nTổng Số Sinh Viên Xếp Loại Giỏi Là: "+ countGioi 
 				+ "\nTổng Số Sinh Viên Xếp Loại Xuất Sắc Là: " + countXuatSac);
 	}
 
 	public String setRank(double point) {
-		String rank = (point < 3) ? Rank.KEM.rank()
-				: (point >= 3 && point < 5) ? Rank.YEU.rank()
-				: (point >= 5 && point < 6.5) ? Rank.TRUNG_BINH.rank()
-				: (point >= 6.5 && point < 7.5) ? Rank.KHA.rank()
-				: (point >= 7.5 && point < 9) ? Rank.GIOI.rank()
-				: Rank.XUAT_SAC.rank();
-		return rank;
+		if (point < 3) {
+			return Rank.KEM.getRank();
+		} else if (point >= 3 && point < 5) {
+			return Rank.YEU.getRank();
+		} else if (point >= 5 && point < 6.5) {
+			return Rank.TRUNG_BINH.getRank();
+		} else if (point >= 6.5 && point < 7.5) {
+			return Rank.KHA.getRank();
+		} else if (point >= 7.5 && point < 9) {
+			return Rank.GIOI.getRank();
+		} else {
+			return Rank.XUAT_SAC.getRank();
+		}
+
+//		String rank = (point < 3) ? Rank.KEM.getRank()
+//				: (point >= 3 && point < 5) ? Rank.YEU.getRank()
+//				: (point >= 5 && point < 6.5) ? Rank.TRUNG_BINH.getRank()
+//				: (point >= 6.5 && point < 7.5) ? Rank.KHA.getRank()
+//				: (point >= 7.5 && point < 9) ? Rank.GIOI.getRank()
+//				: Rank.XUAT_SAC.getRank();
+//		return rank;
 	}
 
 	public void printStudent(Student student) {
-		System.out.printf("\nCode:%s ,Name: %s ,Point: %.1f ,Email: %s ,Rank: %s ",
-				student.getCode(),
-				student.getName(),
-				student.getPoint(),
-				student.getEmail(),
-				setRank(student.getPoint()));
+		System.out.printf("\nCode:%s ,Name: %s ,Point: %.1f ,Email: %s ,Rank: %s ", student.getCode(),
+				student.getName(), student.getPoint(), student.getEmail(), setRank(student.getPoint()));
 	}
 
 	public String checkName() {
@@ -243,34 +274,34 @@ public class Global {
 			name = sc.nextLine();
 			if (name.length() == 0) {
 				System.out.println("Ban Chua Nhap Ten Moi Ban Nhap Lai.");
-				checkName = true;
+				isName = true;
 			} else {
-				checkName = false;
+				isName = false;
 			}
 
-		} while (checkName);
+		} while (isName);
 		return name;
 	}
 
 	public float checkPoint(String mes) {
 		float point = 0;
 		do {
-			checkPoint = false;
+			isPoint = false;
 			try {
 				System.out.println(mes);
 				point = sc.nextFloat();
 				sc.nextLine();
 				if (point < POINT_MIN || point > POINT_MAX) {
 					System.out.println("Mời Bạn Nhập Lại Điểm Trong Khoảng(0 -> 10) ");
-					checkPoint = true;
+					isPoint = true;
 				}
 
 			} catch (InputMismatchException e) {
 				System.out.println("Ban Đã Nhập Sai Định Dạng Dữ Liệu");
-				checkPoint = true;
+				isPoint = true;
 				sc.nextLine();
 			}
-		} while (checkPoint);
+		} while (isPoint);
 		return point;
 	}
 
@@ -281,22 +312,19 @@ public class Global {
 			email = sc.nextLine();
 			if (email.length() == 0) {
 				System.out.println("Bạn Chưa Nhập Email Mời Bạn Nhập Lại.");
-				checkEmail = true;
-			} else if (validateRegexEmail(email)) {
+				isEmail = true;
+			} else if (!isValidEmail(email)) {
 				System.out.println("Bạn Chưa Nhập Đúng Định Dạng Email.");
-				checkEmail = true;
+				isEmail = true;
 			} else {
-				checkEmail = false;
+				isEmail = false;
 			}
 
-		} while (checkEmail);
+		} while (isEmail);
 		return email;
 	}
 
-	public boolean validateRegexEmail(String regex) {
-		if (!regex.matches(EMAIL_REGEX)) {
-			return true;
-		}
-		return false;
+	public boolean isValidEmail(String regex) {
+		return regex.matches(EMAIL_REGEX);
 	}
 }

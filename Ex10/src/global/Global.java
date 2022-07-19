@@ -11,18 +11,18 @@ import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Global {
-    public static File fileConfig = new File("app.conf");
-    public static File dbConfig = new File("db.conf");
+    private static File fileConfig = new File("app.conf");
+    private static File dbConfig = new File("db.conf");
     public static volatile Student student = null;
     public static Queue<Student> studentQueue = new ConcurrentLinkedQueue<>();
-    public static volatile String username = "";
-    public static volatile String password = "";
-    public static volatile String mySQLDriver = "";
-    public static volatile String conUrl = "";
-    public static volatile Connection connection = null;
-    public static volatile Logger logger = Logger.getLogger(Global.class.getName());
+    private static volatile String username = "";
+    private static volatile String password = "";
+    private static volatile String mySQLDriver = "";
+    private static volatile String conUrl = "";
+	public static volatile Connection connection = null;
+    private static volatile Logger logger = Logger.getLogger(Global.class.getName());
 
-    public static boolean auth(String _username, String _password) {
+    public static boolean auth(String username, String password) {
         boolean result = false;
         try {
             Scanner scanner = new Scanner(fileConfig);
@@ -38,11 +38,10 @@ public class Global {
                 }
                 scanner.close();
             }
-            if (_username.equals(username) && _password.equals(password))
+            if (username.equals(username) && password.equals(password))
                 result = true;
         } catch (Exception e) {
-            System.out.println("Loi doc file");
-            System.out.println(e.getMessage());
+        	logger.error("Loi doc file"+e.getMessage());
         }
         return result;
     }
@@ -52,7 +51,7 @@ public class Global {
         try {
             Scanner scanner = new Scanner(dbConfig);
             if (!scanner.hasNextLine()) {
-                System.out.println("File khong co thong tin");
+            	logger.info("File khong co thong tin");
             } else {
                 while (scanner.hasNextLine()) {
                     String[] splitted = scanner.nextLine().split("=");
@@ -66,8 +65,7 @@ public class Global {
                     result = true;
             }
         } catch (Exception e) {
-            System.out.println("Loi doc file");
-            System.out.println(e.getMessage());
+        	logger.error("Loi doc file"+e.getMessage());
         }
         return result;
     }
@@ -82,6 +80,6 @@ public class Global {
                 System.out.println(e);
             }
         }
-        return null;
+        return connection;
     }
 }

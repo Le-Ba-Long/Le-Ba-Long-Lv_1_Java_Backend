@@ -1,7 +1,9 @@
 package model;
 
-public class Student {
+import org.apache.log4j.Logger;
 
+public class Student {
+	private static final Logger LOGGER = Logger.getLogger(Student.class);
 	private String code;
 	private String name;
 	private int age;
@@ -77,8 +79,8 @@ public class Student {
 		this.mark = mark;
 	}
 
-	public void parse(String line,int sl) {
-		if(sl==5) {
+	public void parse(String line, int sl) {
+		if (sl == 5) {
 			String[] param = line.split(", ");
 			try {
 				code = param[0];
@@ -89,7 +91,7 @@ public class Student {
 			} catch (ArrayIndexOutOfBoundsException ex) {
 
 			}
-		}else {
+		} else {
 			String[] param = line.split(", ");
 			try {
 				code = param[0];
@@ -99,21 +101,20 @@ public class Student {
 				address = param[4];
 				mark = Float.parseFloat(param[5]);
 			} catch (ArrayIndexOutOfBoundsException ex) {
-
+				LOGGER.error(ex);
 			}
 		}
 
 	}
 
 	public String saveGetFileLine(int sl) {
+		//5 số lượng các thuộc tính truyền vào contructor
 		if (sl == 5) {
-			return code + ", " + name + ", " + age + ", " + className + ", " + address +"\n";
-		}
-		else {
+			return code + ", " + name + ", " + age + ", " + className + ", " + address + "\n";
+		} else {
 			return code + ", " + name + ", " + age + ", " + className + ", " + address + ", " + mark + "\n";
 		}
 
-		
 	}
 
 }

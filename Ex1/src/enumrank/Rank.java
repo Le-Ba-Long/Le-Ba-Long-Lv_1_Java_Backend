@@ -9,9 +9,14 @@ public enum Rank {
 		this.value = value;
 	}
 
-	public String rank() {
+	public String setRank() {
 		return this.value;
 
 	}
+	public String getRank() {
+		return this.value;
+
+	}
+
 
 }

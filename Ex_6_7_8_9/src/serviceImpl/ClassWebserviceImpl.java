@@ -14,7 +14,6 @@ import service.ClassWebservice;
 public class ClassWebserviceImpl implements ClassWebservice {
 	public static volatile Logger logger = Logger.getLogger(ClassWebserviceImpl.class.getName());
 
-	@SuppressWarnings("unused")
 	@WebMethod
 	@Override
 	public String addClass(@WebParam(name = "username") String username, @WebParam(name = "password") String password,
@@ -23,7 +22,6 @@ public class ClassWebserviceImpl implements ClassWebservice {
 			logger.info("Username/password Không Hợp Lệ");
 			return "Username/Password Không Hợp Lệ";
 		} else {
-			//model.Class c = new Class(name, code);
 			if (!name.equals("") && !code.equals("")) {
 				Global.insertClassToDB(new Class(name, code));
 				logger.info("Da them class vao db");

@@ -18,16 +18,15 @@ import model.Student;
 
 public class Global {
 	private static final Scanner sc = new Scanner(System.in);
-	public static File fileConfig = new File("app.conf");
-	public static File dbConfig = new File("db.conf");
-	public static volatile String username = "";
-	public static volatile String password = "";
-	// public static volatile Student student = null;
-	public static volatile String mySQLDriver = "";
-	public static volatile String conUrl = "";
-	public static volatile Connection connection = null;
-	public static volatile Logger logger = Logger.getLogger(Global.class.getName());
-	public static List<Student> listStudent = new ArrayList<>();
+	private static File fileConfig = new File("app.conf");
+	private static File dbConfig = new File("db.conf");
+	private static volatile String username = "";
+	private static volatile String password = "";
+	private static volatile String mySQLDriver = "";
+	private static volatile String conUrl = "";
+	private static volatile Connection connection = null;
+	private static volatile Logger logger = Logger.getLogger(Global.class.getName());
+	private static List<Student> listStudent = new ArrayList<>();
 	public static Queue<Student> queue = new PriorityQueue<>();
 
 	public static synchronized Student addStudent() {
@@ -69,7 +68,7 @@ public class Global {
 		try {
 			Scanner scanner = new Scanner(fileConfig);
 			if (!scanner.hasNextLine()) {
-				System.out.println("File khong co thong tin");
+				logger.info("File khong co thong tin");
 			} else {
 				while (scanner.hasNextLine()) {
 					String[] splitted = scanner.nextLine().split("=");
@@ -83,8 +82,7 @@ public class Global {
 			if (user.equals(username) && pass.equals(password))
 				return true;
 		} catch (Exception e) {
-			System.out.println("Loi doc file");
-			System.out.println(e.getMessage());
+			logger.info("Loi doc file" + e.getMessage());
 		}
 		return false;
 
@@ -95,7 +93,7 @@ public class Global {
 		try {
 			Scanner scanner = new Scanner(dbConfig);
 			if (!scanner.hasNextLine()) {
-				System.out.println("File khong co thong tin");
+				logger.info("File khong co thong tin");
 			} else {
 				while (scanner.hasNextLine()) {
 					String[] splitted = scanner.nextLine().split("=");
@@ -109,8 +107,7 @@ public class Global {
 					result = true;
 			}
 		} catch (Exception e) {
-			System.out.println("Loi doc file");
-			System.out.println(e.getMessage());
+			logger.info("Loi doc file" + e.getMessage());
 		}
 		return result;
 	}
@@ -142,11 +139,11 @@ public class Global {
 				preparedStatement.setFloat(6, student.getMark());
 				preparedStatement.execute();
 				if (preparedStatement.getUpdateCount() > 0) {
-					Global.logger.debug("Đã thêm student vào db");
+					logger.debug("Đã thêm student vào db");
 				} else
-					Global.logger.error("Thêm student vào db thất bại");
+					logger.error("Thêm student vào db thất bại");
 			} catch (SQLException throwables) {
-				Global.logger.error("Không thêm được student vào db", throwables);
+				logger.error("Không thêm được student vào db", throwables);
 			} finally {
 				try {
 					if (preparedStatement != null)
@@ -154,7 +151,7 @@ public class Global {
 					if (connection != null)
 						connection.close();
 				} catch (SQLException throwables) {
-					System.out.println(throwables);
+					logger.error(throwables);
 				}
 			}
 		}
@@ -171,11 +168,11 @@ public class Global {
 				preparedStatement.setString(2, c.getCode());
 				preparedStatement.execute();
 				if (preparedStatement.getUpdateCount() > 0) {
-					Global.logger.info("Da Them Class Vao db");
+					logger.info("Da Them Class Vao db");
 				} else
-					Global.logger.info("Thêm Class vào db thất bại");
+					logger.info("Thêm Class vào db thất bại");
 			} catch (SQLException throwables) {
-				Global.logger.error("Không thêm được Class vào db", throwables);
+				logger.error("Không thêm được Class vào db", throwables);
 			} finally {
 				try {
 					if (preparedStatement != null)
@@ -183,7 +180,7 @@ public class Global {
 					if (connection != null)
 						connection.close();
 				} catch (SQLException throwables) {
-					System.out.println(throwables);
+					logger.error(throwables);
 				}
 			}
 		}

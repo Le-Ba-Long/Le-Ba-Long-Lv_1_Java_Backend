@@ -8,20 +8,22 @@ import javax.xml.ws.Endpoint;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import serviceImpl.StudentImpl;
+
 public class Ex4 {
-	 public static volatile Logger logger = Logger.getLogger(Ex4.class.getName());
-		public static void main(String[] args) {
-			try {
-				Properties props = new Properties();
-				props.load(new FileInputStream("./log4j/log4j.properties"));
-				PropertyConfigurator.configure(props);
-				logger.info("Main started");	
-				Endpoint.publish( "http://localhost:8080/studentservice/login", new
-						  StudentImpl());
+	private static final Logger LOGGER = Logger.getLogger(Ex4.class.getName());
+	private static final String ENDPONT_STUNDENT_SERVICE = "http://localhost:8080/studentservice/login";
 
-			} catch (Exception e) {
-				logger.error(e);
-			}
+	public static void main(String[] args) {
+		try {
+			Properties props = new Properties();
+			props.load(new FileInputStream("./log4j/log4j.properties"));
+			PropertyConfigurator.configure(props);
+			LOGGER.info("Main started");
+			Endpoint.publish(Ex4.ENDPONT_STUNDENT_SERVICE, new StudentImpl());
 
+		} catch (Exception e) {
+			LOGGER.error(e);
 		}
+
+	}
 }

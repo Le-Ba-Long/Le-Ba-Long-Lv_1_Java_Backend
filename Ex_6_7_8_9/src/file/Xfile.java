@@ -18,12 +18,12 @@ import model.Student;
 
 public class Xfile {
 
-	public static Logger logger = Logger.getLogger(Xfile.class.getName());
+	private static Logger LOGGER = Logger.getLogger(Xfile.class.getName());
 
 	public synchronized static List<Student> readFile() {
 		String log4jConfPath = "../Ex_6_7_8_9/log4j/log4j.properties";
 		PropertyConfigurator.configure(log4jConfPath);
-		List<Student> studentsList = new ArrayList<>();
+		List<Student> listStudent = new ArrayList<>();
 		FileInputStream fis = null;
 		InputStreamReader reader = null;
 		BufferedReader bufferedReader = null;
@@ -31,7 +31,7 @@ public class Xfile {
 			fis = new FileInputStream("students.txt");
 			reader = new InputStreamReader(fis, StandardCharsets.UTF_8);
 			bufferedReader = new BufferedReader(reader);
-
+			// line dùng để lấy dữ liệu một dòng trong file student.txt
 			String line;
 			System.out.println("Danh Sách Sinh Viên  Đọc Từ File Là: ");
 			while ((line = bufferedReader.readLine()) != null) {
@@ -40,15 +40,14 @@ public class Xfile {
 				}
 				Student student = new Student();
 				student.parse(line);
-				studentsList.add(student);
-				// System.out.println(line);
+				listStudent.add(student);
 			}
-			logger.info("Doc Thong Tin Tu File Thanh Cong");
+			LOGGER.info("Doc Thong Tin Tu File Thanh Cong");
 
 		} catch (FileNotFoundException e) {
-			logger.error(e);
+			LOGGER.error(e);
 		} catch (IOException e) {
-			logger.error(e);
+			LOGGER.error(e);
 		} finally {
 			try {
 				if (fis != null) {
@@ -61,10 +60,10 @@ public class Xfile {
 					bufferedReader.close();
 				}
 			} catch (IOException e) {
-				logger.error(e);
+				LOGGER.error(e);
 			}
 		}
-		return studentsList;
+		return listStudent;
 
 	}
 
@@ -83,27 +82,25 @@ public class Xfile {
 				// Chuyen String to Byte[]
 				byte[] dataStudent = line.getBytes(StandardCharsets.UTF_8);
 				fos.write(dataStudent);
-				System.out.println("Ghi File Thành công");
-				logger.info("Ghi File Thanh Cong");
+				LOGGER.info("Ghi File Thanh Cong");
 			} catch (UnsupportedEncodingException e) {
-				logger.error(e);
+				LOGGER.error(e);
 			} catch (FileNotFoundException e) {
-				logger.error(e);
+				LOGGER.error(e);
 			} catch (IOException e) {
-				logger.error(e);
+				LOGGER.error(e);
 			} finally {
 				if (fos != null) {
 					try {
 						fos.close();
 					} catch (IOException e) {
-						logger.error(e);
+						LOGGER.error(e);
 					}
 				}
 			}
 
 		} else {
-			System.out.println("Ghi Thất Bại");
-			logger.info("Ghi File That Bai");
+			LOGGER.info("Ghi File That Bai");
 		}
 	}
 

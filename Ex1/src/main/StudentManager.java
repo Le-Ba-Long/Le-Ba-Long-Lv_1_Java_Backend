@@ -6,7 +6,7 @@ import global.Global;
 
 public class StudentManager {
 	private static final Scanner sc = new Scanner(System.in);
-	public static void meNu() {
+	public static void displayMenu() {
 		System.out.println(
 				"\n---------------------------------------   MENU   ---------------------------------------------"
 						+ "\n\t1.Nhap Danh Sach Hoc Vien."
@@ -27,7 +27,7 @@ public class StudentManager {
 		int chose;
 		Global global = new Global();
 		do {
-			meNu();
+			displayMenu();
 			System.out.println("Moi Ban Nhap Lua Chon: ");
 			chose = sc.nextInt();
 			sc.nextLine();
@@ -50,27 +50,31 @@ public class StudentManager {
 				global.findCodeAndUpdateStudent();
 				break;
 			case 6:
-				global.sortStudentByPoint("Sap Xep Sinh Vien Theo Diem Giam Dan: ", global.listStudent.size());
+				global.sortStudentByPoint("Sap Xep Sinh Vien Theo Diem Giam Dan: ");
 
 				break;
 			case 7:
 				global.outputStudentLimitFiveMaxPoint();
 				break;
 			case 8:
-				System.out.printf("Điểm Trung Bình Của Tất Cả Sinh Viên Là: %.2f ",global.CalculatePointAVG());
-				
+				global.calculatePointAVG();
 				break;
 			case 9:
 				global.outputStudentOnPointAVG();
 				break;
 			case 10:
-				global.SyntheticStudentGroupbyRank();
+				global.syntheticStudentGroupbyRank();
 				break;
 			case 11:
 				global.outputStudent();
 				break;
+				
+			default:
+				System.out.println("Bạn Nhập Không Đúng Lựa Chọn Mời Bạn Nhập Lại !");
+				break;
 
 			}
+			
 
 		} while (chose != 0);
 

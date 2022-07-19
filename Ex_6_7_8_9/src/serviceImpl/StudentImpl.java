@@ -15,7 +15,6 @@ import thread.ThreadOne;
 public class StudentImpl implements StudentWS {
 	public static volatile Logger logger = Logger.getLogger(StudentImpl.class.getName());
 
-	@SuppressWarnings("unused")
 	@Override
 	@WebMethod
 	public String getStudent(@WebParam(name = "username") String username, @WebParam(name = "password") String password,

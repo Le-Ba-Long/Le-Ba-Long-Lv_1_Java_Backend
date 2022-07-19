@@ -18,12 +18,12 @@ import model.Student;
 
 public class Xfile {
 
-	public static Logger logger = Logger.getLogger(Xfile.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(Xfile.class.getName());
 
 	public synchronized static List<Student> readFile(int sl) {
 		String log4jConfPath = "../Ex2_3_4_5/log4j/log4j.properties";
 		PropertyConfigurator.configure(log4jConfPath);
-		List<Student> studentsList = new ArrayList<>();
+		List<Student> listStudent = new ArrayList<>();
 		FileInputStream fis = null;
 		InputStreamReader reader = null;
 		BufferedReader bufferedReader = null;
@@ -33,22 +33,21 @@ public class Xfile {
 			bufferedReader = new BufferedReader(reader);
 
 			String line;
-			System.out.println("Danh Sách Sinh Viên  Đọc Từ File Là: ");
+			//System.out.println("Danh Sách Sinh Viên  Đọc Từ File Là: ");
 			while ((line = bufferedReader.readLine()) != null) {
 				if (line.isEmpty()) {
 					continue;
 				}
 				Student student = new Student();
 				student.parse(line,sl);
-				studentsList.add(student);
-				// System.out.println(line);
+				listStudent.add(student);
 			}
-			logger.info("Doc Thong Tin Tu File Thanh Cong");
+			LOGGER.info("Doc Thong Tin Tu File Thanh Cong");
 
 		} catch (FileNotFoundException e) {
-			logger.error(e);
+			LOGGER.error(e);
 		} catch (IOException e) {
-			logger.error(e);
+			LOGGER.error(e);
 		} finally {
 			try {
 				if (fis != null) {
@@ -61,10 +60,10 @@ public class Xfile {
 					bufferedReader.close();
 				}
 			} catch (IOException e) {
-				logger.error(e);
+				LOGGER.error(e);
 			}
 		}
-		return studentsList;
+		return listStudent;
 
 	}
 
@@ -74,7 +73,8 @@ public class Xfile {
 		if (student != null) {
 			try {
 				/*
-				 * fos = new FileOutputStream("students.txt",true); k dung true thi se k ghi de
+				 * fos = new FileOutputStream("students.txt",true);
+				 *  k dung true thi se k ghi de
 				 * duoc du lieu len file
 				 */
 				fos = new FileOutputStream("students.txt", true);
@@ -83,27 +83,25 @@ public class Xfile {
 				// Chuyen String to Byte[]
 				byte[] dataStudent = line.getBytes(StandardCharsets.UTF_8);
 				fos.write(dataStudent);
-				System.out.println("Ghi File Thành công");
-				logger.info("Ghi File Thanh Cong");
+				LOGGER.info("Ghi File Thanh Cong");
 			} catch (UnsupportedEncodingException e) {
-				logger.error(e);
+				LOGGER.error(e);
 			} catch (FileNotFoundException e) {
-				logger.error(e);
+				LOGGER.error(e);
 			} catch (IOException e) {
-				logger.error(e);
+				LOGGER.error(e);
 			} finally {
 				if (fos != null) {
 					try {
 						fos.close();
 					} catch (IOException e) {
-						logger.error(e);
+						LOGGER.error(e);
 					}
 				}
 			}
 
 		} else {
-			System.out.println("Ghi Thất Bại");
-			logger.info("Ghi File That Bai");
+			LOGGER.info("Ghi File That Bai");
 		}
 	}
 

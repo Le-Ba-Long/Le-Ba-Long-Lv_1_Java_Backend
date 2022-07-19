@@ -1,20 +1,12 @@
 package global;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.log4j.Logger;
 
 import file.Xfile;
@@ -22,12 +14,12 @@ import model.Student;
 
 public class Global {
 	private static final Scanner sc = new Scanner(System.in);
-    public static File fileConfig = new File("app.conf");
-    public static volatile String username = "";
-    public static volatile String password = "";
-    public static volatile Logger logger = Logger.getLogger(Global.class.getName());
-	public static List<Student> listStudent = new ArrayList<>();
-	public static Queue<Student> queue = new PriorityQueue<>();
+    private static File fileConfig = new File("app.conf");
+    private static volatile String username = "";
+    private static volatile String password = "";
+    private static final Logger LOGGER = Logger.getLogger(Global.class.getName());
+	private static final List<Student> listStudent = new ArrayList<>();
+	public static final Queue<Student> queue = new PriorityQueue<>();
 	static {
 		// Khởi Tạo Dữ Liệu Cho listStudent 
 		listStudent.add(new Student("DTC1", "Le Ba Long", 10, "Lớp CNTT K17G", "Hà Nội"));
@@ -45,7 +37,8 @@ public class Global {
 	}
 
 	public static synchronized Student addStudent(int sl) {
-		if(sl==5) {
+		//5 là số lượng  tham số được truyền vào  trong contructor
+		if(sl == 5) {
 			Student student = null;
 			System.out.println("Mời Bạn Nhập Mã Sinh Viên : ");
 			String code = sc.nextLine();
@@ -60,9 +53,9 @@ public class Global {
 			String address = sc.nextLine();
 			if (code != "" && name != "" && className != "" && address != "") {
 				  student = new Student(code, name, age, className, address);
-				System.out.println("Lưu Thành Công");
+				LOGGER.info("Lưu Thành Công");
 			} else {
-				System.out.println("Lưu Thất Bại");
+				LOGGER.info("Lưu Thất Bại");
 
 			}
 			return  student;
@@ -83,11 +76,10 @@ public class Global {
 			System.out.println("Mời Bạn Nhập Điểm : ");
 			Float mark = sc.nextFloat();
 			if (code != "" && name != "" && className != "" && address != ""&& String.valueOf(age) != "" && String.valueOf(mark)!= "") {
-				  student = new Student(code, name, age, className, address);
-				System.out.println("Lưu Thành Công");
+				  student = new Student(code, name, age, className, address,mark);
+					LOGGER.info("Lưu Thành Công");
 			} else {
-				System.out.println("Lưu Thất Bại");
-
+				LOGGER.info("Lưu Thất Bại");
 			}
 			return  student;
 		}
@@ -95,9 +87,16 @@ public class Global {
 	}
 
 	public static void showListStudents(int sl) {
+		// sl=5 là số lượng tham số được  truyền vào trong Contructor
 		if(sl==5) {
+			System.out.printf("%-20s%-20s%-10s%-20s%-20s\n",
+					"Mã Sinh Viên",
+					"Họ Tên",
+					"Tuổi",
+					"Lớp Học",
+					"Địa Chỉ");
 			for (Student students : Xfile.readFile(sl)) {
-				System.out.printf("%s, %s, %d, %s, %s",
+				System.out.printf("%-20s%-20s%-10d%-20s%-20s",
 						students.getCode(),
 						students.getName(),
 						students.getAge(),
@@ -107,14 +106,21 @@ public class Global {
 			}
 		}
 		else {
+			System.out.printf("%-20s%-20s%-10s%-20s%-20s%-10s\n",
+					"Mã Sinh Viên",
+					"Họ Tên",
+					"Tuổi",
+					"Lớp Học",
+					"Địa Chỉ",
+					"Điểm");
 			for (Student students : Xfile.readFile(sl)) {
-				System.out.printf("%s, %s, %d, %s, %s, %.2f",
+				System.out.printf("%-20s%-20s%-10s%-20s%-20s%-10s\n",
 						students.getCode(),
 						students.getName(),
 						students.getAge(),
 						students.getClassName(),
 						students.getAddress() ,
-						students.getMark()
+						String.valueOf(students.getMark())
 						+ "\n");
 			}
 		}
@@ -125,7 +131,7 @@ public class Global {
 		 try {
 	            Scanner scanner = new Scanner(fileConfig);
 	            if (!scanner.hasNextLine()) {
-	                System.out.println("File khong co thong tin");
+	                LOGGER.info("File khong co thong tin");
 	            } else {
 	                while (scanner.hasNextLine()) {
 	                    String[] splitted = scanner.nextLine().split("=");
@@ -138,9 +144,8 @@ public class Global {
 	            }
 	            if (user.equals(username) && pass.equals(password))
 	                return true;
-	        } catch (Exception e) {
-	            System.out.println("Loi doc file");
-	            System.out.println(e.getMessage());
+	        } catch (FileNotFoundException e) {        
+	            LOGGER.error("Loi doc file"+e.getMessage());
 	        }
 	        return false;
 		

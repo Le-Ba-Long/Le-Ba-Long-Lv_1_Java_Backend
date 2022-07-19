@@ -8,9 +8,9 @@ public class Student {
 	private String className;
 	private String address;
 	private float mark;
+
 	public Student() {
 	}
-
 
 	public Student(String code, String name, int age, String className, String address, float mark) {
 		this.code = code;
@@ -78,7 +78,7 @@ public class Student {
 			className = param[3];
 			address = param[4];
 		} catch (ArrayIndexOutOfBoundsException ex) {
-
+			System.out.println("lỗi Tràn Chỉ Số Mảng");
 		}
 
 	}

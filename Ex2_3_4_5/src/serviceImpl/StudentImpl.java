@@ -13,9 +13,8 @@ import thread.ThreadOne;
 
 @WebService
 public class StudentImpl implements StudentService {
-	public static volatile Logger logger = Logger.getLogger(StudentImpl.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(StudentImpl.class.getName());
 
-	@SuppressWarnings("unused")
 	@Override
 	@WebMethod
 	public String getStudent(@WebParam(name = "username") String username, @WebParam(name = "password") String password,
@@ -23,18 +22,18 @@ public class StudentImpl implements StudentService {
 			@WebParam(name = "code") String code, @WebParam(name = "className") String className,
 			@WebParam(name = "address") String address, @WebParam(name = "mark") Float mark) {
 		if (!Global.checkLogin(username, password)) {
-			logger.error("Username/password khong dung");
+			LOGGER.error("Username/password khong dung");
 			return "Username/password khong dung";
 		} else {
 
 			if (name == null || age == null || code == null || className == null || address == null || mark == null) {
-				logger.info("Them student vao queue that bai");
+				LOGGER.info("Them student vao queue that bai");
 				return "That bai";
 			} else {
 				Student student = new Student(code, name, age, className, address, mark);
 				ThreadOne threadOne = new ThreadOne(student);
 				threadOne.start();
-				logger.info("Da them student vao queue");
+				LOGGER.info("Da them student vao queue");
 				return "Thanh cong";
 
 			}
